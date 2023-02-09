@@ -44,3 +44,12 @@ class TopComplaintTypeViewSet(viewsets.ModelViewSet):
       .order_by('-complaint_type_count')
     topThreeComplaintTypes = complaintsTypesCounts[0:3]
     return Response(topThreeComplaintTypes)
+
+class UserConstituentsComplaintsViewSet(viewsets.ModelViewSet):
+  http_method_names = ['get']
+  def list(self, request):
+    # Get the user constituents complaints
+    complaint_account = mapUserDistrictToAccount(request.user.id)
+    view_queryset = Complaint.objects.filter(council_dist = complaint_account)
+    serializer = ComplaintSerializer(view_queryset, many=True)
+    return Response(serializer.data)
